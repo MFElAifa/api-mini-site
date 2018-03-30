@@ -158,4 +158,13 @@ class ApiProjectController extends AbstractApiController
             ));
         }
     }
+
+
+    
+    /**
+     * @Route("/", name="homepage")
+     */
+    public function indexAction(){
+        $this->redirec('nelmio_api_doc_index');
+    }
 }
