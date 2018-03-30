@@ -26,7 +26,8 @@ class ApiProjectController extends AbstractApiController
      *  },
      *  statusCodes={
      *      200="Successful",
-     *      403="Validation errors"
+     *      403="Validation errors",
+     *      500="Error Server"
      *  }
      * )
      * 
@@ -35,8 +36,48 @@ class ApiProjectController extends AbstractApiController
      */
     public function postCategoryAction(Request $request)
     {
-        $productService = $this->get('product_service');
-        $result = $productService->createCategory($request->get('name'));
-        return $this->buildResponse($request, $result);
+        try{
+            $productService = $this->get('product_service');
+            $result = $productService->createCategory($request->get('name'));
+            return $this->buildResponse($request, $result);
+        }catch(\Exception $e){
+            return $this->buildResponse($request, array(
+                'success' => 'false',
+                'code' => '500',
+                'message' => 'Error : '.$e->getMessag(),
+                'data' => null
+            ));
+        }
+    }
+
+    /**
+     * Get All Categories
+     * @ApiDoc(
+     *  resource="/api/categories",
+     *  description="Get Categories",
+     *  section="Categories",
+     *  statusCodes={
+     *      200="Successful",
+     *      500="Error Server"
+     *  }
+     * )
+     * 
+     * Get Route annotation.
+     * @GET("/categories.{_format}", defaults={"_format": "json"})
+     */
+    public function getCategoriesAction(Request $request)
+    {
+        try{
+            $productService = $this->get('product_service');
+            $result = $productService->getAllCategories();
+            return $this->buildResponse($request, $result);
+        }catch(\Exception $e){
+            return $this->buildResponse($request, array(
+                'success' => 'false',
+                'code' => '500',
+                'message' => 'Error : '.$e->getMessag(),
+                'data' => null
+            ));
+        }
     }
 }

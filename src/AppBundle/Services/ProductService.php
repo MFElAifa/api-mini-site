@@ -18,7 +18,7 @@ class ProductService extends AbstractEntityManagerService
 	/**
 	 * Create a category
 	 * @param string $name
-	 * @return JsonResponse
+	 * @return array
 	 */
 	public function createCategory($name)
 	{
@@ -32,5 +32,22 @@ class ProductService extends AbstractEntityManagerService
 		}
 	}
 	
+	
+	/**
+	 * Create a category
+	 * @return array
+	 */
+	public function getAllCategories()
+	{
+		$categories = $this->getCategoryRepository()->findAll();
+		return $this->buildData('true', '200', "All Categories", $categories);
+	}
 
+	/**
+     * @return \AppBundle\Repository\CategoryRepository|\Doctrine\Common\Persistence\ObjectRepository
+     */
+    private function getCategoryRepository()
+    {
+        return $this->em->getRepository('AppBundle:Category');
+    }
 }
