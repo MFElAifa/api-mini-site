@@ -10,4 +10,14 @@ namespace AppBundle\Repository;
  */
 class CategoryRepository extends \Doctrine\ORM\EntityRepository
 {
+
+	public function findByIdOrName($category){
+		$res = $this->createQueryBuilder('c')
+                    ->where("c.id = :category")
+                    ->orWhere("c.name = :category");
+        
+        $res->setParameter('category', $category)->setMaxResults(1);
+
+        return $res->getQuery()->getOneOrNullResult();
+	}
 }

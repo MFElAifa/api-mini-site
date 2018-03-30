@@ -18,8 +18,8 @@ class ApiProjectController extends AbstractApiController
     /**
      * Create a new Category
      * @ApiDoc(
-     *  resource="/api/categories",
-     *  description="Add Categorys",
+     *  resource="/api/category",
+     *  description="Add Category",
      *  section="Categories",
      *  parameters={
      *      {"name"="name", "description"="Name of Category", "required"=true, "dataType"="string"}
@@ -32,7 +32,7 @@ class ApiProjectController extends AbstractApiController
      * )
      * 
      * POST Route annotation.
-     * @POST("/categories.{_format}", defaults={"_format": "json"})
+     * @POST("/category.{_format}", defaults={"_format": "json"})
      */
     public function postCategoryAction(Request $request)
     {
@@ -44,7 +44,7 @@ class ApiProjectController extends AbstractApiController
             return $this->buildResponse($request, array(
                 'success' => 'false',
                 'code' => '500',
-                'message' => 'Error : '.$e->getMessag(),
+                'message' => 'Error : '.$e->getMessage(),
                 'data' => null
             ));
         }
@@ -75,7 +75,45 @@ class ApiProjectController extends AbstractApiController
             return $this->buildResponse($request, array(
                 'success' => 'false',
                 'code' => '500',
-                'message' => 'Error : '.$e->getMessag(),
+                'message' => 'Error : '.$e->getMessage(),
+                'data' => null
+            ));
+        }
+    }
+
+    /**
+     * Create a new Product
+     * @ApiDoc(
+     *  resource="/api/products",
+     *  description="Add Product",
+     *  section="Products",
+     *  parameters={
+     *      {"name"="name", "description"="Name of product", "required"=true, "dataType"="string"},
+     *      {"name"="price", "description"="Price of product", "required"=false, "dataType"="string"},
+     *      {"name"="stock", "description"="Information Stock", "required"=false, "dataType"="string"},
+     *      {"name"="categories[0]", "description"="Categories", "required"=true, "dataType"="array"}
+     *  },
+     *  statusCodes={
+     *      200="Successful",
+     *      403="Validation errors",
+     *      500="Error Server"
+     *  }
+     * )
+     * 
+     * POST Route annotation.
+     * @POST("/product.{_format}", defaults={"_format": "json"})
+     */
+    public function postProductAction(Request $request)
+    {
+        try{
+            $productService = $this->get('product_service');
+            $result = $productService->createProduct($request);
+            return $this->buildResponse($request, $result);
+        }catch(\Exception $e){
+            return $this->buildResponse($request, array(
+                'success' => 'false',
+                'code' => '500',
+                'message' => 'Error : '.$e->getMessage(),
                 'data' => null
             ));
         }
