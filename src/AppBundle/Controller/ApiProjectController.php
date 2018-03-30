@@ -118,4 +118,44 @@ class ApiProjectController extends AbstractApiController
             ));
         }
     }
+
+
+    /**
+     * Get All Products By category
+     * @ApiDoc(
+     *  resource="/api/categories/{idCategory}/products/{page}",
+     *  description="Get All Products By category",
+     *  section="Products",
+     *  requirements={
+     *         {
+     *             "name"="idCategory",
+     *             "dataType"="integer",
+     *             "requirements"="\d+",
+     *             "description"="The category unique identifier."
+     *         }
+     *  },
+     *  statusCodes={
+     *      200="Successful",
+     *      500="Error Server"
+     *  }
+     * )
+     * 
+     * Get Route annotation.
+     * @GET("/categories/{idCategory}/products/{page}.{_format}", defaults={"_format": "json", "page":1})
+     */
+    public function getProductsByCategoryAction(Request $request, $idCategory, $page)
+    {
+        try{
+            $productService = $this->get('product_service');
+            $result = $productService->getAllProductsByCategory($idCategory, $page);
+            return $this->buildResponse($request, $result);
+        }catch(\Exception $e){
+            return $this->buildResponse($request, array(
+                'success' => 'false',
+                'code' => '500',
+                'message' => 'Error : '.$e->getMessage(),
+                'data' => null
+            ));
+        }
+    }
 }

@@ -16,6 +16,23 @@ class ProductService extends AbstractEntityManagerService
         $this->em = $em;
     }
 
+
+	/**
+     * @return \AppBundle\Repository\CategoryRepository|\Doctrine\Common\Persistence\ObjectRepository
+     */
+    private function getCategoryRepository()
+    {
+        return $this->em->getRepository('AppBundle:Category');
+    }
+
+
+	/**
+     * @return \AppBundle\Repository\ProductRepository|\Doctrine\Common\Persistence\ObjectRepository
+     */
+    private function getProductRepository()
+    {
+        return $this->em->getRepository('AppBundle:Product');
+    }
 	
 	/**
 	 * Create a category
@@ -44,15 +61,6 @@ class ProductService extends AbstractEntityManagerService
 		$categories = $this->getCategoryRepository()->findAll();
 		return $this->buildData('true', '200', "All Categories", $categories);
 	}
-
-	/**
-     * @return \AppBundle\Repository\CategoryRepository|\Doctrine\Common\Persistence\ObjectRepository
-     */
-    private function getCategoryRepository()
-    {
-        return $this->em->getRepository('AppBundle:Category');
-    }
-
 
     /**
 	 * Create a Product
@@ -108,9 +116,25 @@ class ProductService extends AbstractEntityManagerService
 			$product->addCategory($category);
 		}
 		$this->persistAndFlush($product);
-		//dump($product);
-		///exit;
-		//$product->getCategories();
+
 		return $this->buildData('true', '200', "Product create with success", $product);
+	}
+
+	public function getAllProductsByCategory($idCategory, $page, $nbItems=10){
+		$idCategory = (int) $idCategory;
+		
+		if(!$idCategory || $idCategory <= 0){
+			return $this->buildData('false', '403', "idCategory not available!");
+		}
+		
+		$category = $this->getCategoryRepository()->findOneBy(['id' => $idCategory]);
+		
+		if(!$category ){
+			return $this->buildData('false', '403', "Category not exist!");
+		}
+
+		$products = $this->getProductRepository()->findByCategory($category, $page, $nbItems);
+		
+		return $this->buildData('true', '200', "Products By Category", $products);
 	}
 }

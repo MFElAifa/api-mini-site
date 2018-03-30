@@ -2,6 +2,8 @@
 
 namespace AppBundle\Repository;
 
+use AppBundle\Entity\Category;
+
 /**
  * ProductRepository
  *
@@ -10,4 +12,15 @@ namespace AppBundle\Repository;
  */
 class ProductRepository extends \Doctrine\ORM\EntityRepository
 {
+	public function findByCategory(Category $category, int $page, int $nbItems)
+    {
+        $qb = $this->createQueryBuilder("p");
+        $qb->innerJoin('p.categories', 'c')
+           ->where("c.id = :categoryId")
+           ->setParameter("categoryId", $category->getId())
+           ->setFirstResult($nbItems * ($page - 1))
+           ->setMaxResults($nbItems);
+        
+        return $qb->getQuery()->getResult();
+    }
 }
