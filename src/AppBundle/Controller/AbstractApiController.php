@@ -6,8 +6,6 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use JSend\JSendResponse;
-use FOS\RestBundle\View\View;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use JMS\Serializer\SerializationContext;
 
