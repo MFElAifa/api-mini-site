@@ -330,5 +330,71 @@ class ApiProjectControllerTest extends WebTestCase
         $this->assertEquals(403, $entrys[1]);
     }
 
-   
+    /**
+     * Test get products by category - api format Json
+     * @group Functional
+     */
+    public function testGetProducts()
+    {
+        $client = static::createClient();
+
+        $crawler = $client->request('GET', '/api/categories/1/products/1');
+        
+        $jsonCrawler = json_decode($client->getResponse()->getContent());
+       
+        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+        $this->assertEquals(200, $jsonCrawler->code);
+    }
+
+   /**
+     * Test get products by category - api format Xml
+     * @group Functional
+     */
+    public function testGetProductsXml()
+    {
+        $client = static::createClient();
+
+        $crawler = $client->request('GET', '/api/categories/1/products/1.xml');
+        
+        $xmlCrawler = new Crawler(str_replace('<?xml version="1.0" encoding="UTF-8" standalone="yes"?>', '',$client->getResponse()->getContent()));
+
+        $entrys = $xmlCrawler->filterXPath('//result/entry')->extract(array('_text'));
+        
+        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+        $this->assertEquals(200, $entrys[1]);
+    }
+
+     /**
+     * Test get products by category not found - api format Json
+     * @group Functional
+     */
+    public function testGetProductsByErrorCatgory()
+    {
+        $client = static::createClient();
+
+        $crawler = $client->request('GET', '/api/categories/99999999/products/1');
+        
+        $jsonCrawler = json_decode($client->getResponse()->getContent());
+       
+        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+        $this->assertEquals(403, $jsonCrawler->code);
+    }
+
+   /**
+     * Test get products by category not found - api format Xml
+     * @group Functional
+     */
+    public function testGetProductsByErrorCatgoryXml()
+    {
+        $client = static::createClient();
+
+        $crawler = $client->request('GET', '/api/categories/99999999/products/1.xml');
+        
+        $xmlCrawler = new Crawler(str_replace('<?xml version="1.0" encoding="UTF-8" standalone="yes"?>', '',$client->getResponse()->getContent()));
+
+        $entrys = $xmlCrawler->filterXPath('//result/entry')->extract(array('_text'));
+        
+        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+        $this->assertEquals(403, $entrys[1]);
+    }
 }
