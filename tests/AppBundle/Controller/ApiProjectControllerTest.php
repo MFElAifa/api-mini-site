@@ -110,4 +110,225 @@ class ApiProjectControllerTest extends WebTestCase
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
         $this->assertEquals(200, $entrys[1]);
     }
+
+
+    /**
+     * Test create product - api format Json
+     * @group Functional
+     */
+    public function testPostProduct()
+    {
+        $client = static::createClient();
+
+        $crawler = $client->request('POST', '/api/product', [
+            'name' => 'Product 1',
+            'price' => 125,
+            'stock' => 100,
+            'categories' => [1]
+        ]);
+        
+        $jsonCrawler = json_decode($client->getResponse()->getContent());
+       
+        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+        $this->assertEquals(200, $jsonCrawler->code);
+    }
+
+    /**
+     * Test create product - api format Xml
+     * @group Functional
+     */
+    public function testPostProductXml()
+    {
+        $client = static::createClient();
+
+        $crawler = $client->request('POST', '/api/product.xml', [
+            'name' => 'Product 1',
+            'price' => 125,
+            'stock' => 100,
+            'categories' => [1]
+        ]);
+        
+        $xmlCrawler = new Crawler(str_replace('<?xml version="1.0" encoding="UTF-8" standalone="yes"?>', '',$client->getResponse()->getContent()));
+
+        $entrys = $xmlCrawler->filterXPath('//result/entry')->extract(array('_text'));
+        
+        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+        $this->assertEquals(200, $entrys[1]);
+    }
+
+    /**
+     * Test create product without name - api format Json
+     * @group Functional
+     */
+    public function testPostProductWithoutName()
+    {
+        $client = static::createClient();
+
+        $crawler = $client->request('POST', '/api/product', [
+            'price' => 125,
+            'stock' => 100,
+            'categories' => [1]
+        ]);
+        
+        $jsonCrawler = json_decode($client->getResponse()->getContent());
+       
+        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+        $this->assertEquals(403, $jsonCrawler->code);
+    }
+
+    /**
+     * Test create product without name - api format Xml
+     * @group Functional
+     */
+    public function testPostProductWithoutNametXml()
+    {
+        $client = static::createClient();
+
+        $crawler = $client->request('POST', '/api/product.xml', [
+            'price' => 125,
+            'stock' => 100,
+            'categories' => [1]
+        ]);
+        
+        $xmlCrawler = new Crawler(str_replace('<?xml version="1.0" encoding="UTF-8" standalone="yes"?>', '',$client->getResponse()->getContent()));
+
+        $entrys = $xmlCrawler->filterXPath('//result/entry')->extract(array('_text'));
+        
+        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+        $this->assertEquals(403, $entrys[1]);
+    }
+
+    /**
+     * Test create product with price error - api format Json
+     * @group Functional
+     */
+    public function testPostProductWithoutPrice()
+    {
+        $client = static::createClient();
+
+        $crawler = $client->request('POST', '/api/product', [
+            'name' => 'Product 1',
+            'price' => 'ABC',
+            'stock' => 100,
+            'categories' => [1]
+        ]);
+        
+        $jsonCrawler = json_decode($client->getResponse()->getContent());
+       
+        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+        $this->assertEquals(403, $jsonCrawler->code);
+    }
+
+    /**
+     * Test create product with price error - api format Xml
+     * @group Functional
+     */
+    public function testPostProductWithoutPricetXml()
+    {
+        $client = static::createClient();
+
+        $crawler = $client->request('POST', '/api/product.xml', [
+            'name' => 'Product 1',
+            'price' => 'ABC',
+            'stock' => 100,
+            'categories' => [1]
+        ]);
+        
+        $xmlCrawler = new Crawler(str_replace('<?xml version="1.0" encoding="UTF-8" standalone="yes"?>', '',$client->getResponse()->getContent()));
+
+        $entrys = $xmlCrawler->filterXPath('//result/entry')->extract(array('_text'));
+        
+        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+        $this->assertEquals(403, $entrys[1]);
+    }
+
+    /**
+     * Test create product with stock error - api format Json
+     * @group Functional
+     */
+    public function testPostProductWithoutStock()
+    {
+        $client = static::createClient();
+
+        $crawler = $client->request('POST', '/api/product', [
+            'name' => 'Product 1',
+            'price' => 125,
+            'stock' => 'ABC',
+            'categories' => [1]
+        ]);
+        
+        $jsonCrawler = json_decode($client->getResponse()->getContent());
+        
+        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+        $this->assertEquals(403, $jsonCrawler->code);
+    }
+
+    /**
+     * Test create product with stock error - api format Xml
+     * @group Functional
+     */
+    public function testPostProductWithoutStocktXml()
+    {
+        $client = static::createClient();
+
+        $crawler = $client->request('POST', '/api/product.xml', [
+            'name' => 'Product 1',
+            'price' => 125,
+            'stock' => 'ABC',
+            'categories' => [1]
+        ]);
+        
+        $xmlCrawler = new Crawler(str_replace('<?xml version="1.0" encoding="UTF-8" standalone="yes"?>', '',$client->getResponse()->getContent()));
+
+        $entrys = $xmlCrawler->filterXPath('//result/entry')->extract(array('_text'));
+        
+        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+        $this->assertEquals(403, $entrys[1]);
+    }
+
+    /**
+     * Test create product with category error - api format Json
+     * @group Functional
+     */
+    public function testPostProductWithoutCategory()
+    {
+        $client = static::createClient();
+
+        $crawler = $client->request('POST', '/api/product', [
+            'name' => 'Product 1',
+            'price' => 125,
+            'stock' => 100,
+            'categories' => [1000]
+        ]);
+        
+        $jsonCrawler = json_decode($client->getResponse()->getContent());
+        
+        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+        $this->assertEquals(403, $jsonCrawler->code);
+    }
+
+    /**
+     * Test create product with category error - api format Xml
+     * @group Functional
+     */
+    public function testPostProductWithoutCategorytXml()
+    {
+        $client = static::createClient();
+
+        $crawler = $client->request('POST', '/api/product.xml', [
+            'name' => 'Product 1',
+            'price' => 125,
+            'stock' => 100,
+            'categories' => [1000]
+        ]);
+        
+        $xmlCrawler = new Crawler(str_replace('<?xml version="1.0" encoding="UTF-8" standalone="yes"?>', '',$client->getResponse()->getContent()));
+
+        $entrys = $xmlCrawler->filterXPath('//result/entry')->extract(array('_text'));
+        
+        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+        $this->assertEquals(403, $entrys[1]);
+    }
+
+   
 }

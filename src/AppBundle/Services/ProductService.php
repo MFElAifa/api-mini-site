@@ -87,7 +87,6 @@ class ProductService extends AbstractEntityManagerService
 			}
 		}
 		if($stock && !empty($stock)){
-			$stock = (int) $stock;
 			if (!is_int($stock) || $stock < 0) {
 			   return $this->buildData('false', '403', "Stock must an integer positive");
 			}
