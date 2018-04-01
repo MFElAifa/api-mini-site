@@ -81,14 +81,17 @@ class ProductService extends AbstractEntityManagerService
 			return $this->buildData('false', '403', "Categories must be an array and not empty");
 		}
 		if($price && !empty($price)){
-			$price = (double) $price;
-			if ((!is_int($price) || !is_float($price)) && $price <= 0) {
+			if (!is_numeric($price) || $price <= 0) {
 			   return $this->buildData('false', '403', "Price not available");
 			}
 		}
 		if($stock && !empty($stock)){
-			if (!is_int($stock) || $stock < 0) {
+			$nb1 = (double)$stock;
+			$nb2 = (int)$stock;
+			if (!is_numeric($stock) || $stock < 0 ) {
 			   return $this->buildData('false', '403', "Stock must an integer positive");
+			}elseif($nb1/$nb2 > 1){
+				return $this->buildData('false', '403', "Stock must an integer positive");
 			}
 		}
 
