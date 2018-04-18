@@ -2,51 +2,52 @@
 
 namespace AppBundle\Controller;
 
-use AppBundle\Services\ProductService; 
+use AppBundle\Entity\Category;
+use AppBundle\Entity\Product;
+use AppBundle\Form\CategoryType;
+use AppBundle\Form\ProductType;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
-use FOS\RestBundle\Controller\Annotations\Get;
-use FOS\RestBundle\Controller\Annotations\Post;
+use FOS\RestBundle\Controller\Annotations as REST;
+use FOS\RestBundle\Controller\Annotations\QueryParam;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 
 /**
  * @Route("/api")
  */
-class ApiProjectController extends AbstractApiController
+class ApiProjectController extends Controller
 {
     /**
-     * Create a new Category
+     * Creat a new Category
      * @ApiDoc(
-     *  resource="/api/category",
-     *  description="Add Category",
-     *  section="Categories",
-     *  parameters={
-     *      {"name"="name", "description"="Name of Category", "required"=true, "dataType"="string"}
-     *  },
-     *  statusCodes={
-     *      200="Successful",
-     *      403="Validation errors",
-     *      500="Error Server"
-     *  }
+     *    description="Add Category",
+     *    section="Categories",
+     *    input={"class"=CategoryType::class, "name"=""}
      * )
      * 
-     * POST Route annotation.
-     * @POST("/category.{_format}", defaults={"_format": "json"})
+     * @REST\View(statusCode=Response::HTTP_CREATED, serializerGroups={"list"})
+     * @REST\Post("/category")
      */
     public function postCategoryAction(Request $request)
     {
-        try{
-            $productService = $this->get('product_service');
-            $result = $productService->createCategory($request->get('name'));
-            return $this->buildResponse($request, $result);
-        }catch(\Exception $e){
-            return $this->buildResponse($request, array(
-                'success' => 'false',
-                'code' => '500',
-                'message' => 'Error : '.$e->getMessage(),
-                'data' => null
-            ));
+        $name = $request->get('name');
+
+        $category = new Category();
+        $category->setName(null); 
+        $form = $this->createForm(CategoryType::class, $category);
+
+        $form->submit($request->request->all());
+
+        if ($form->isValid()) {
+            $em = $this->get('doctrine.orm.entity_manager');
+            $em->persist($category);
+            $em->flush();
+            return $category;
+        } else {
+            return $form;
         }
     }
 
@@ -56,66 +57,57 @@ class ApiProjectController extends AbstractApiController
      *  resource="/api/categories",
      *  description="Get Categories",
      *  section="Categories",
-     *  statusCodes={
-     *      200="Successful",
-     *      500="Error Server"
-     *  }
+     *  output= { "class"=Category::class, "collection"=true, "groups"={"category"} }
      * )
      * 
-     * Get Route annotation.
-     * @GET("/categories.{_format}", defaults={"_format": "json"})
+     * @REST\View(serializerGroups={"list"}))
+     * @REST\Get("/categories")
      */
     public function getCategoriesAction(Request $request)
     {
-        try{
-            $productService = $this->get('product_service');
-            $result = $productService->getAllCategories();
-            return $this->buildResponse($request, $result);
-        }catch(\Exception $e){
-            return $this->buildResponse($request, array(
-                'success' => 'false',
-                'code' => '500',
-                'message' => 'Error : '.$e->getMessage(),
-                'data' => null
-            ));
-        }
+        
+        $productService = $this->get('product_service');
+        $result = $productService->getAllCategories();
+        return $result;
     }
 
     /**
      * Create a new Product
      * @ApiDoc(
-     *  resource="/api/products",
-     *  description="Add Product",
-     *  section="Products",
-     *  parameters={
-     *      {"name"="name", "description"="Name of product", "required"=true, "dataType"="string"},
-     *      {"name"="price", "description"="Price of product", "required"=false, "dataType"="string"},
-     *      {"name"="stock", "description"="Information Stock", "required"=false, "dataType"="string"},
-     *      {"name"="categories[0]", "description"="Categories", "required"=true, "dataType"="array"}
-     *  },
-     *  statusCodes={
-     *      200="Successful",
-     *      403="Validation errors",
-     *      500="Error Server"
-     *  }
+     *    resource="/api/product",
+     *    description="Add Product",
+     *    section="Products",
+     *    input={"class"=ProductType::class, "name"=""}
      * )
      * 
-     * POST Route annotation.
-     * @POST("/product.{_format}", defaults={"_format": "json"})
+     * @REST\View(statusCode=Response::HTTP_CREATED, serializerGroups={"list"})
+     * @REST\Post("/product")
      */
     public function postProductAction(Request $request)
     {
-        try{
-            $productService = $this->get('product_service');
-            $result = $productService->createProduct($request);
-            return $this->buildResponse($request, $result);
-        }catch(\Exception $e){
-            return $this->buildResponse($request, array(
-                'success' => 'false',
-                'code' => '500',
-                'message' => 'Error : '.$e->getMessage(),
-                'data' => null
-            ));
+        $name = $request->get('name');
+        $price = $request->get('price');
+        $stock = $request->get('stock');
+        $categories = $request->get('categories');
+        
+        $product = new Product();
+        $product->setName($name); 
+        $product->setPrice($price); 
+        $product->setStock($stock); 
+        foreach($categories as $id){
+            $category = $this->em->getRepository(Category::class)->findOneBy(['id' => $id]);
+            if($category)
+                $product->addCategory($category);
+        }
+        $form = $this->createForm(CategoryType::class, $product);
+
+        if ($form->isValid()) {
+            $em = $this->get('doctrine.orm.entity_manager');
+            $em->persist($product);
+            $em->flush();
+            return $product;
+        } else {
+            return $form;
         }
     }
 
@@ -126,45 +118,18 @@ class ApiProjectController extends AbstractApiController
      *  resource="/api/categories/{idCategory}/products/{page}",
      *  description="Get All Products By category",
      *  section="Products",
-     *  requirements={
-     *         {
-     *             "name"="idCategory",
-     *             "dataType"="integer",
-     *             "requirements"="\d+",
-     *             "description"="The category unique identifier."
-     *         }
-     *  },
-     *  statusCodes={
-     *      200="Successful",
-     *      500="Error Server"
-     *  }
+     *  output= { "class"=Product::class, "collection"=true, "groups"={"product"} }
      * )
      * 
-     * Get Route annotation.
-     * @GET("/categories/{idCategory}/products/{page}.{_format}", defaults={"_format": "json", "page":1})
+     * @REST\View(serializerGroups={"list"}))
+     * @REST\Get("/categories/{idCategory}/products/{page}", defaults={"page":1})
+     * @QueryParam(name="idCategory", requirements="\d+", default="", description="Id For Category")
+     * @QueryParam(name="page", requirements="\d+", default="1", description="Number pager")
      */
     public function getProductsByCategoryAction(Request $request, $idCategory, $page)
     {
-        try{
-            $productService = $this->get('product_service');
-            $result = $productService->getAllProductsByCategory($idCategory, $page);
-            return $this->buildResponse($request, $result);
-        }catch(\Exception $e){
-            return $this->buildResponse($request, array(
-                'success' => 'false',
-                'code' => '500',
-                'message' => 'Error : '.$e->getMessage(),
-                'data' => null
-            ));
-        }
+        $productService = $this->get('product_service');
+        return $productService->getAllProductsByCategory($idCategory, $page);
     }
 
-
-    
-    /**
-     * @Route("/", name="homepage")
-     */
-    public function indexAction(){
-        $this->redirec('nelmio_api_doc_index');
-    }
 }
