@@ -18,28 +18,20 @@ class ApiProjectControllerTest extends WebTestCase
 
         $crawler = $client->request('POST', '/api/category', ['name' => 'Category 1']);
         
-        $jsonCrawler = json_decode($client->getResponse()->getContent());
-       
-        $this->assertEquals(200, $client->getResponse()->getStatusCode());
-        $this->assertEquals(200, $jsonCrawler->code);
+        $this->assertEquals(201, $client->getResponse()->getStatusCode());
     }
 
     /**
      * Test create category - api format Xml
      * @group Functional
      */
-    public function testPostCategoryXml()
+   public function testPostCategoryXml()
     {
         $client = static::createClient();
 
         $crawler = $client->request('POST', '/api/category.xml', ['name' => 'Category 1']);
         
-        $xmlCrawler = new Crawler(str_replace('<?xml version="1.0" encoding="UTF-8" standalone="yes"?>', '',$client->getResponse()->getContent()));
-
-        $entrys = $xmlCrawler->filterXPath('//result/entry')->extract(array('_text'));
-        
-        $this->assertEquals(200, $client->getResponse()->getStatusCode());
-        $this->assertEquals(200, $entrys[1]);
+        $this->assertEquals(201, $client->getResponse()->getStatusCode());
     }
 
     /**
@@ -50,12 +42,11 @@ class ApiProjectControllerTest extends WebTestCase
     {
         $client = static::createClient();
 
-        $crawler = $client->request('POST', '/api/category');
+        $crawler = $client->request('POST', '/api/category.json');
         
         $jsonCrawler = json_decode($client->getResponse()->getContent());
        
-        $this->assertEquals(200, $client->getResponse()->getStatusCode());
-        $this->assertEquals(403, $jsonCrawler->code);
+        $this->assertEquals(400, $client->getResponse()->getStatusCode());
     }
 
 
@@ -69,12 +60,7 @@ class ApiProjectControllerTest extends WebTestCase
 
         $crawler = $client->request('POST', '/api/category.xml');
         
-        $xmlCrawler = new Crawler(str_replace('<?xml version="1.0" encoding="UTF-8" standalone="yes"?>', '',$client->getResponse()->getContent()));
-
-        $entrys = $xmlCrawler->filterXPath('//result/entry')->extract(array('_text'));
-        
-        $this->assertEquals(200, $client->getResponse()->getStatusCode());
-        $this->assertEquals(403, $entrys[1]);
+        $this->assertEquals(400, $client->getResponse()->getStatusCode());
     }
 
     /**
@@ -85,15 +71,12 @@ class ApiProjectControllerTest extends WebTestCase
     {
         $client = static::createClient();
 
-        $crawler = $client->request('GET', '/api/categories');
-        
-        $jsonCrawler = json_decode($client->getResponse()->getContent());
-       
+        $crawler = $client->request('GET', '/api/categories.json');
+
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
-        $this->assertEquals(200, $jsonCrawler->code);
     }
 
-   /**
+    /**
      * Test get categories - api format Xml
      * @group Functional
      */
@@ -103,14 +86,47 @@ class ApiProjectControllerTest extends WebTestCase
 
         $crawler = $client->request('GET', '/api/categories.xml');
         
-        $xmlCrawler = new Crawler(str_replace('<?xml version="1.0" encoding="UTF-8" standalone="yes"?>', '',$client->getResponse()->getContent()));
-
-        $entrys = $xmlCrawler->filterXPath('//result/entry')->extract(array('_text'));
-        
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
-        $this->assertEquals(200, $entrys[1]);
     }
 
+
+    /**
+     * Test delete categories - api format Json
+     * @group Functional
+     */
+    public function testDeleteCategories()
+    {
+        $client = static::createClient();
+        
+        $crawler = $client->request('POST', '/api/category.json', ['name' => 'Category 1']);
+        
+        $content = json_decode($client->getResponse()->getContent());
+
+        $this->assertEquals(201, $client->getResponse()->getStatusCode());
+        
+        $crawler = $client->request('DELETE', '/api/categories.json', ['id' => $content->id]);
+
+        $this->assertEquals(204, $client->getResponse()->getStatusCode());
+    }
+
+    /**
+     * Test get categories - api format Xml
+     * @group Functional
+     */
+    public function testDeleteCategoriesXml()
+    {
+        $client = static::createClient();
+        
+        $crawler = $client->request('POST', '/api/category.json', ['name' => 'Category 1']);
+        
+        $content = json_decode($client->getResponse()->getContent());
+
+        $this->assertEquals(201, $client->getResponse()->getStatusCode());
+
+        $crawler = $client->request('DELETE', '/api/categories.xml', ['id' => $content->id]);
+        
+        $this->assertEquals(204, $client->getResponse()->getStatusCode());
+    }
 
     /**
      * Test create product - api format Json
@@ -124,13 +140,12 @@ class ApiProjectControllerTest extends WebTestCase
             'name' => 'Product 1',
             'price' => 125,
             'stock' => 100,
-            'categories' => [1]
+            'categories' => [
+                ["name" => "TEST"]
+            ]
         ]);
         
-        $jsonCrawler = json_decode($client->getResponse()->getContent());
-       
-        $this->assertEquals(200, $client->getResponse()->getStatusCode());
-        $this->assertEquals(200, $jsonCrawler->code);
+        $this->assertEquals(201, $client->getResponse()->getStatusCode());
     }
 
     /**
@@ -145,15 +160,15 @@ class ApiProjectControllerTest extends WebTestCase
             'name' => 'Product 1',
             'price' => 125,
             'stock' => 100,
-            'categories' => [1]
+            'categories' => [
+                ["name" => "TEST"]
+            ]
         ]);
         
-        $xmlCrawler = new Crawler(str_replace('<?xml version="1.0" encoding="UTF-8" standalone="yes"?>', '',$client->getResponse()->getContent()));
-
-        $entrys = $xmlCrawler->filterXPath('//result/entry')->extract(array('_text'));
+        /*$xmlCrawler = new Crawler(str_replace('<?xml version="1.0" encoding="UTF-8" standalone="yes"?>', '',$client->getResponse()->getContent()));
+        $entrys = $xmlCrawler->filterXPath('//result/entry')->extract(array('_text'));*/
         
-        $this->assertEquals(200, $client->getResponse()->getStatusCode());
-        $this->assertEquals(200, $entrys[1]);
+        $this->assertEquals(201, $client->getResponse()->getStatusCode());
     }
 
     /**
@@ -166,14 +181,10 @@ class ApiProjectControllerTest extends WebTestCase
 
         $crawler = $client->request('POST', '/api/product', [
             'price' => 125,
-            'stock' => 100,
-            'categories' => [1]
+            'stock' => 100
         ]);
         
-        $jsonCrawler = json_decode($client->getResponse()->getContent());
-       
-        $this->assertEquals(200, $client->getResponse()->getStatusCode());
-        $this->assertEquals(403, $jsonCrawler->code);
+        $this->assertEquals(400, $client->getResponse()->getStatusCode());
     }
 
     /**
@@ -186,16 +197,10 @@ class ApiProjectControllerTest extends WebTestCase
 
         $crawler = $client->request('POST', '/api/product.xml', [
             'price' => 125,
-            'stock' => 100,
-            'categories' => [1]
+            'stock' => 100
         ]);
         
-        $xmlCrawler = new Crawler(str_replace('<?xml version="1.0" encoding="UTF-8" standalone="yes"?>', '',$client->getResponse()->getContent()));
-
-        $entrys = $xmlCrawler->filterXPath('//result/entry')->extract(array('_text'));
-        
-        $this->assertEquals(200, $client->getResponse()->getStatusCode());
-        $this->assertEquals(403, $entrys[1]);
+        $this->assertEquals(400, $client->getResponse()->getStatusCode());
     }
 
     /**
@@ -208,15 +213,10 @@ class ApiProjectControllerTest extends WebTestCase
 
         $crawler = $client->request('POST', '/api/product', [
             'name' => 'Product 1',
-            'price' => 'ABC',
-            'stock' => 100,
-            'categories' => [1]
+            'price' => 'ABC'
         ]);
         
-        $jsonCrawler = json_decode($client->getResponse()->getContent());
-       
-        $this->assertEquals(200, $client->getResponse()->getStatusCode());
-        $this->assertEquals(403, $jsonCrawler->code);
+        $this->assertEquals(400, $client->getResponse()->getStatusCode());
     }
 
     /**
@@ -229,17 +229,10 @@ class ApiProjectControllerTest extends WebTestCase
 
         $crawler = $client->request('POST', '/api/product.xml', [
             'name' => 'Product 1',
-            'price' => 'ABC',
-            'stock' => 100,
-            'categories' => [1]
+            'price' => 'ABC'
         ]);
         
-        $xmlCrawler = new Crawler(str_replace('<?xml version="1.0" encoding="UTF-8" standalone="yes"?>', '',$client->getResponse()->getContent()));
-
-        $entrys = $xmlCrawler->filterXPath('//result/entry')->extract(array('_text'));
-        
-        $this->assertEquals(200, $client->getResponse()->getStatusCode());
-        $this->assertEquals(403, $entrys[1]);
+        $this->assertEquals(400, $client->getResponse()->getStatusCode());
     }
 
     /**
@@ -252,15 +245,11 @@ class ApiProjectControllerTest extends WebTestCase
 
         $crawler = $client->request('POST', '/api/product', [
             'name' => 'Product 1',
-            'price' => 125,
-            'stock' => 'ABC',
-            'categories' => [1]
+            'price' => 125
+            //,'stock' => 'ABC'
         ]);
         
-        $jsonCrawler = json_decode($client->getResponse()->getContent());
-        
-        $this->assertEquals(200, $client->getResponse()->getStatusCode());
-        $this->assertEquals(403, $jsonCrawler->code);
+        $this->assertEquals(400, $client->getResponse()->getStatusCode());
     }
 
     /**
@@ -274,16 +263,10 @@ class ApiProjectControllerTest extends WebTestCase
         $crawler = $client->request('POST', '/api/product.xml', [
             'name' => 'Product 1',
             'price' => 125,
-            'stock' => 'ABC',
-            'categories' => [1]
+            'stock' => 'ABC'
         ]);
         
-        $xmlCrawler = new Crawler(str_replace('<?xml version="1.0" encoding="UTF-8" standalone="yes"?>', '',$client->getResponse()->getContent()));
-
-        $entrys = $xmlCrawler->filterXPath('//result/entry')->extract(array('_text'));
-        
-        $this->assertEquals(200, $client->getResponse()->getStatusCode());
-        $this->assertEquals(403, $entrys[1]);
+        $this->assertEquals(400, $client->getResponse()->getStatusCode());
     }
 
     /**
@@ -297,14 +280,12 @@ class ApiProjectControllerTest extends WebTestCase
         $crawler = $client->request('POST', '/api/product', [
             'name' => 'Product 1',
             'price' => 125,
-            'stock' => 100,
-            'categories' => [1000]
+            'stock' => 100
         ]);
         
         $jsonCrawler = json_decode($client->getResponse()->getContent());
         
-        $this->assertEquals(200, $client->getResponse()->getStatusCode());
-        $this->assertEquals(403, $jsonCrawler->code);
+        $this->assertEquals(400, $client->getResponse()->getStatusCode());
     }
 
     /**
@@ -318,17 +299,64 @@ class ApiProjectControllerTest extends WebTestCase
         $crawler = $client->request('POST', '/api/product.xml', [
             'name' => 'Product 1',
             'price' => 125,
-            'stock' => 100,
-            'categories' => [1000]
+            'stock' => 100
         ]);
         
-        $xmlCrawler = new Crawler(str_replace('<?xml version="1.0" encoding="UTF-8" standalone="yes"?>', '',$client->getResponse()->getContent()));
-
-        $entrys = $xmlCrawler->filterXPath('//result/entry')->extract(array('_text'));
+        /*$xmlCrawler = new Crawler(str_replace('<?xml version="1.0" encoding="UTF-8" standalone="yes"?>', '',$client->getResponse()->getContent()));
+        $entrys = $xmlCrawler->filterXPath('//result/entry')->extract(array('_text'));*/
         
-        $this->assertEquals(200, $client->getResponse()->getStatusCode());
-        $this->assertEquals(403, $entrys[1]);
+        $this->assertEquals(400, $client->getResponse()->getStatusCode());
     }
+
+    /**
+     * Test create product with category error - api format Json
+     * @group Functional
+     */
+    public function testPostProductWithCategoryNotFound()
+    {
+        $client = static::createClient();
+
+        $crawler = $client->request('POST', '/api/product', [
+            'name' => 'Product 1',
+            'price' => 125,
+            'stock' => 100,
+            'categories' => [
+                [
+                    'name' => 'ABCDFEHGEL'
+                ]
+            ]
+        ]);
+        
+        $jsonCrawler = json_decode($client->getResponse()->getContent());
+        
+        $this->assertEquals(404, $client->getResponse()->getStatusCode());
+    }
+
+    /**
+     * Test create product with category error - api format Xml
+     * @group Functional
+     */
+    public function testPostProductWithCategoryNotFoundXml()
+    {
+        $client = static::createClient();
+
+        $crawler = $client->request('POST', '/api/product.xml', [
+            'name' => 'Product 1',
+            'price' => 125,
+            'stock' => 100,
+            'categories' => [
+                [
+                    'name' => 'ABCDFEHGEL'
+                ]
+            ]
+        ]);
+        
+        /*$xmlCrawler = new Crawler(str_replace('<?xml version="1.0" encoding="UTF-8" standalone="yes"?>', '',$client->getResponse()->getContent()));
+        $entrys = $xmlCrawler->filterXPath('//result/entry')->extract(array('_text'));*/
+        
+        $this->assertEquals(404, $client->getResponse()->getStatusCode());
+    }
+
 
     /**
      * Test get products by category - api format Json
@@ -340,10 +368,7 @@ class ApiProjectControllerTest extends WebTestCase
 
         $crawler = $client->request('GET', '/api/categories/1/products/1');
         
-        $jsonCrawler = json_decode($client->getResponse()->getContent());
-       
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
-        $this->assertEquals(200, $jsonCrawler->code);
     }
 
    /**
@@ -356,12 +381,7 @@ class ApiProjectControllerTest extends WebTestCase
 
         $crawler = $client->request('GET', '/api/categories/1/products/1.xml');
         
-        $xmlCrawler = new Crawler(str_replace('<?xml version="1.0" encoding="UTF-8" standalone="yes"?>', '',$client->getResponse()->getContent()));
-
-        $entrys = $xmlCrawler->filterXPath('//result/entry')->extract(array('_text'));
-        
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
-        $this->assertEquals(200, $entrys[1]);
     }
 
      /**
@@ -374,10 +394,7 @@ class ApiProjectControllerTest extends WebTestCase
 
         $crawler = $client->request('GET', '/api/categories/99999999/products/1');
         
-        $jsonCrawler = json_decode($client->getResponse()->getContent());
-       
-        $this->assertEquals(200, $client->getResponse()->getStatusCode());
-        $this->assertEquals(403, $jsonCrawler->code);
+        $this->assertEquals(404, $client->getResponse()->getStatusCode());
     }
 
    /**
@@ -390,11 +407,63 @@ class ApiProjectControllerTest extends WebTestCase
 
         $crawler = $client->request('GET', '/api/categories/99999999/products/1.xml');
         
-        $xmlCrawler = new Crawler(str_replace('<?xml version="1.0" encoding="UTF-8" standalone="yes"?>', '',$client->getResponse()->getContent()));
+        $this->assertEquals(404, $client->getResponse()->getStatusCode());
+    }
 
-        $entrys = $xmlCrawler->filterXPath('//result/entry')->extract(array('_text'));
+
+     /**
+     * Test delete product - api format Json
+     * @group Functional
+     */
+    public function testDeleteProducts()
+    {
+        $client = static::createClient();
         
-        $this->assertEquals(200, $client->getResponse()->getStatusCode());
-        $this->assertEquals(403, $entrys[1]);
+        $crawler = $client->request('POST', '/api/product.json', [
+            'name' => 'Product 1',
+            'price' => 123.55,
+            'stock' => 100,
+            'categories' => [
+                [
+                    'name' => 'TEST'
+                ]
+            ]
+        ]);
+        
+        $content = json_decode($client->getResponse()->getContent());
+
+        $this->assertEquals(201, $client->getResponse()->getStatusCode());
+        
+        $crawler = $client->request('DELETE', '/api/products.json', ['id' => $content->id]);
+
+        $this->assertEquals(204, $client->getResponse()->getStatusCode());
+    }
+
+    /**
+     * Test get categories - api format Xml
+     * @group Functional
+     */
+    public function testDeletProductXml()
+    {
+        $client = static::createClient();
+        
+        $crawler = $client->request('POST', '/api/product.json', [
+            'name' => 'Product 1',
+            'price' => 123.55,
+            'stock' => 100,
+            'categories' => [
+                [
+                    'name' => 'TEST'
+                ]
+            ]
+        ]);
+        
+        $content = json_decode($client->getResponse()->getContent());
+
+        $this->assertEquals(201, $client->getResponse()->getStatusCode());
+
+        $crawler = $client->request('DELETE', '/api/products.xml', ['id' => $content->id]);
+        
+        $this->assertEquals(204, $client->getResponse()->getStatusCode());
     }
 }

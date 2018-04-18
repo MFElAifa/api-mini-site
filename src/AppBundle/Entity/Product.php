@@ -4,7 +4,9 @@ namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation as Serializer;
+use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
     
 /**
  * Product
@@ -30,16 +32,17 @@ class Product
      *
      * @ORM\Column(name="name", type="string", length=100)
      *
+     * @Assert\NotBlank(message="Name Required!")
      * @Serializer\Groups({"detail", "list"})
      */
     private $name;
 
 
     /**
-     * @var string
+     * @ORM\Column(name="price", type="float", precision=3, scale=2)
      *
-     * @ORM\Column(name="price", type="string", length=100, nullable=true)
-     *
+     * @Assert\NotBlank(message="Price Required!")
+     * @Assert\Type(type="float", message="Price is not valide")
      * @Serializer\Groups({"detail", "list"})
      */
     private $price;
@@ -47,8 +50,10 @@ class Product
     /**
      * @var integer
      *
-     * @ORM\Column(name="stock", type="integer", nullable=true)
+     * @ORM\Column(name="stock", type="integer")
      *
+     * @Assert\NotBlank(message="Stock Required!")
+     * @Assert\Type(type="integer", message="Stock is not a valid .")
      * @Serializer\Groups({"detail", "list"})
      */
     private $stock;
@@ -59,6 +64,7 @@ class Product
      *      joinColumns={@ORM\JoinColumn(name="product_id", referencedColumnName="id")},
      *      inverseJoinColumns={@ORM\JoinColumn(name="categoy_id", referencedColumnName="id")}
      *   )
+     *
      * @Serializer\Groups({"detail", "list"})
      * @Serializer\Type("ArrayCollection<AppBundle\Entity\Category>")
      */
@@ -186,5 +192,17 @@ class Product
     public function getCategories()
     {
         return $this->categories;
+    }
+
+    /**
+     * @Assert\Callback
+     */
+    public function isProductValid(ExecutionContextInterface $context)
+    {
+        if (count($this->categories)==0) {
+            $context->buildViolation('You have to add any category for product!')
+                    ->atPath('categories')
+                    ->addViolation();
+        }
     }
 }

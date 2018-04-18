@@ -4,6 +4,7 @@ namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation as Serializer;
+use Symfony\Component\Validator\Constraints as Assert;
 /**
  * Category
  *
@@ -28,7 +29,8 @@ class Category
      *
      * @ORM\Column(name="name", type="string", length=100)
      *
-     * @Serializer\Groups({"detail", "list"})
+     * @Assert\NotBlank(message="Name Required!")
+     * @Serializer\Groups({"list"})
      */
     private $name;
 
