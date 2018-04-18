@@ -10,6 +10,7 @@ use AppBundle\Form\CredentialsType;
 use AppBundle\Entity\AuthToken;
 use AppBundle\Entity\Credentials;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class AuthTokenController extends Controller
 {
@@ -71,11 +72,9 @@ class AuthTokenController extends Controller
             $em->remove($authToken);
             $em->flush();
         } else {
-            throw new \Symfony\Component\HttpKernel\Exception\BadRequestHttpException("Id Not Valid");
+            throw new BadRequestHttpException("Id Not Valid");
         }
     }
-
-
 
     private function invalidCredentials()
     {
