@@ -10,7 +10,6 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 use FOS\RestBundle\Controller\Annotations as REST;
-use FOS\RestBundle\Controller\Annotations\QueryParam;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -25,7 +24,7 @@ class ApiProjectController extends Controller
      *    section="Categories",
      *    input={"class"=CategoryType::class, "name"=""},
      *    statusCodes = {
-     *        201 = "Creation with success",
+     *        201 = "Create with success",
      *        400 = "Formulaire invalide"
      *    },
      *    responseMap={
@@ -61,7 +60,11 @@ class ApiProjectController extends Controller
      *  resource="/api/categories",
      *  description="Get Categories",
      *  section="Categories",
-     *  output= {"class"=Category::class, "collection"=true, "collectionName"="categories", "groups"={"list"}}
+     *  output= {"class"=Category::class, "collection"=true, "collectionName"="categories", "groups"={"list"}},
+     *  statusCodes = {
+     *        200 = "Categories List",
+     *        500 = "Erreur Server"
+     *  }
      * )
      * 
      * @REST\View()
@@ -82,7 +85,7 @@ class ApiProjectController extends Controller
      *  description="Delete Category",
      *  section="Categories",
      *  parameters={
-     *      {"name"="id", "dataType"="integer", "required"=true, "description"="category id"}
+     *      {"name"="id", "dataType"="integer", "required"=true, "description"="Category id"}
      *  },
      *  statusCodes = {
      *        204 = "Category removed",
@@ -109,7 +112,15 @@ class ApiProjectController extends Controller
      *    resource="/api/product",
      *    description="Add Product",
      *    section="Products",
-     *    input={"class"=ProductType::class, "name"=""}
+     *    input={"class"=ProductType::class, "name"=""},
+     *    statusCodes = {
+     *        201 = "Create with success",
+     *        400 = "Formulaire invalide"
+     *    },
+     *    responseMap={
+     *         201 = {"class"=Product::class, "groups"={"place"}},
+     *         400 = { "class"=ProductType::class, "form_errors"=true, "name" = ""}
+     *    }
      * )
      * 
      * @REST\View(statusCode=Response::HTTP_CREATED, serializerGroups={"list"})
@@ -163,7 +174,11 @@ class ApiProjectController extends Controller
      *          "description"="Number page"
      *      }
      *  },
-     *  output= { "class"=Product::class, "collection"=true, "collectionName"="products", "groups"={"list"}}
+     *  output= { "class"=Product::class, "collection"=true, "collectionName"="products", "groups"={"list"}},
+     *  statusCodes = {
+     *        200 = "Products List",
+     *        500 = "Erreur Server"
+     *  }
      * )
      * 
      * @REST\View(serializerGroups={"list"})
@@ -184,9 +199,15 @@ class ApiProjectController extends Controller
      * @ApiDoc(
      *  resource="/api/products",
      *  description="Delete Category",
-     *  section="Products"
+     *  section="Products",
+     *  parameters={
+     *       {"name"="id", "dataType"="integer", "required"=true, "description"="Product id"}
+     *  },
+     *  statusCodes = {
+     *        204 = "Product Deleted",
+     *        404 = "Product not found"
+     *  }
      * )
-     * @QueryParam(name="id", requirements="\d+", default="", description="Id for product to delete")
      * @REST\View(statusCode=Response::HTTP_NO_CONTENT)
      * @REST\Delete("/products")
      */
@@ -200,5 +221,4 @@ class ApiProjectController extends Controller
             throw new NotFoundHttpException('Product not found');
         }
     }
-
 }
