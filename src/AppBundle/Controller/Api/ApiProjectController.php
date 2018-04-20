@@ -19,7 +19,7 @@ class ApiProjectController extends Controller
 {
     /**
      * Creat a new Category
-
+     *
      * @ApiDoc(
      *    description="Add Category",
      *    section="Categories",
@@ -61,7 +61,7 @@ class ApiProjectController extends Controller
      *  resource="/api/categories",
      *  description="Get Categories",
      *  section="Categories",
-     *  output= { "class"=Category::class, "collection"=true, "groups"={"category"} }
+     *  output= {"class"=Category::class, "collection"=true, "collectionName"="categories", "groups"={"list"}}
      * )
      * 
      * @REST\View()
@@ -80,9 +80,15 @@ class ApiProjectController extends Controller
      * @ApiDoc(
      *  resource="/api/categories",
      *  description="Delete Category",
-     *  section="Categories"
+     *  section="Categories",
+     *  parameters={
+     *      {"name"="id", "dataType"="integer", "required"=true, "description"="category id"}
+     *  },
+     *  statusCodes = {
+     *        204 = "Category removed",
+     *        404 = "Category not found"
+     *  }
      * )
-     * @QueryParam(name="id", requirements="\d+", default="", description="Id for category to delete")
      * @REST\View(statusCode=Response::HTTP_NO_CONTENT)
      * @REST\Delete("/categories")
      */
@@ -143,13 +149,25 @@ class ApiProjectController extends Controller
      *  resource="/api/categories/{idCategory}/products/{page}",
      *  description="Get All Products By category",
      *  section="Products",
-     *  output= { "class"=Product::class, "collection"=true, "groups"={"product"} }
+     *  requirements={
+     *      {
+     *          "name"="idCategory",
+     *          "dataType"="integer",
+     *          "requirement"="\d+",
+     *          "description"="Category id"
+     *      },
+     *      {
+     *          "name"="page",
+     *          "dataType"="integer",
+     *          "requirement"="\d+",
+     *          "description"="Number page"
+     *      }
+     *  },
+     *  output= { "class"=Product::class, "collection"=true, "collectionName"="products", "groups"={"list"}}
      * )
      * 
-     * @REST\View(serializerGroups={"list"}))
+     * @REST\View(serializerGroups={"list"})
      * @REST\Get("/categories/{idCategory}/products/{page}", defaults={"page":1})
-     * @QueryParam(name="idCategory", requirements="\d+", default="", description="Id For Category")
-     * @QueryParam(name="page", requirements="\d+", default="1", description="Number pager")
      */
     public function getProductsByCategoryAction(Request $request, $idCategory, $page)
     {

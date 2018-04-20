@@ -67,7 +67,21 @@ swiftmailer:
     password:  "%mailer_password%"
     spool:     { type: memory }
 
-nelmio_api_doc: ~
+nelmio_api_doc: 
+    swagger:
+        api_base_path:        /
+        swagger_version:      '1.2'
+        api_version:          '1.0'
+        info:
+            title:                Rest API
+            description:          'Proposition de sortie aux utilisateurs'
+
+
+    #areas:
+    #    path_patterns: # an array of regexps
+    #        - ^/api(?!/doc$)
+    #    host_patterns:
+    #        - ^api\.
 
 fos_rest:
     routing_loader:

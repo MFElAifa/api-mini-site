@@ -13,7 +13,7 @@ class DefaultController extends Controller
     public function indexAction()
     {
     	//dump("Hello World!!!"); exit;
-        return $this->redirectToRoute('nelmio_api_doc_index');
-        
+        //return $this->redirectToRoute('nelmio_api_doc_index');
+        return $this->redirectToRoute('app.swagger_ui');
     }
 }
