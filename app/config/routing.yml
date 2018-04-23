@@ -8,20 +8,20 @@ project:
     prefix:   /api
 
 
-NelmioApiDocBundle:
-    resource: "@NelmioApiDocBundle/Resources/config/routing.yml"
-    prefix:   /api/doc
+#NelmioApiDocBundle:
+#    resource: "@NelmioApiDocBundle/Resources/config/routing.yml"
+#    prefix:   /api/doc
 
-nelmio_api_swagger:
-    resource: "@NelmioApiDocBundle/Resources/config/swagger_routing.yml"
-    prefix: /api-docs
+#nelmio_api_swagger:
+#    resource: "@NelmioApiDocBundle/Resources/config/swagger_routing.yml"
+#    prefix: /api-docs
 
-#app.swagger_ui:
-#    path: /api/doc
-#    methods: GET
-#    defaults: { _controller: nelmio_api_doc.controller.swagger_ui }
+app.swagger_ui:
+    path: /api/doc
+    methods: GET
+    defaults: { _controller: nelmio_api_doc.controller.swagger_ui }
 
-#app.swagger:
-#    path: /api/doc.json
-#    methods: GET
-#    defaults: { _controller: nelmio_api_doc.controller.swagger }
+app.swagger:
+    path: /api/doc.json
+    methods: GET
+    defaults: { _controller: nelmio_api_doc.controller.swagger }

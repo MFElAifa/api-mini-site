@@ -1,13 +1,12 @@
 <?php
 namespace AppBundle\Controller\Api;
 
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
-use FOS\RestBundle\Controller\Annotations as Rest; // alias pour toutes les annotations
+use Symfony\Component\HttpFoundation\Response;
+use FOS\RestBundle\Controller\Annotations as Rest;
+use Nelmio\ApiDocBundle\Annotation\Model;
+use Swagger\Annotations as SWG;
 use AppBundle\Form\UserType;
 use AppBundle\Entity\User;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -15,16 +14,34 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 class ApiUserController extends Controller
 {
     /**
-     * @Rest\View(statusCode=Response::HTTP_CREATED, serializerGroups={"user"})
+     * @SWG\Parameter(
+     *     name="form",
+     *     in="body",
+     *     description="User creation parameters",
+     *     @Model(type=UserType::class)
+     * )
+     * @SWG\Response(
+     *     response=201,
+     *     description="Success",
+     *     @Model(type=User::class)
+     * )
+     * @SWG\Response(
+     *     response=400,
+     *     description="Form invalid"
+     * )
+     * @SWG\Tag(name="Users")
+     * @Rest\View(statusCode=Response::HTTP_CREATED, serializerGroups={"preference"})
      * @Rest\Post("/users")
      */
     public function postUsersAction(Request $request)
     {
         $user = new User();
-        $form = $this->createForm(UserType::class, $user, ['validation_groups'=>['Default', 'New']]);
+        $form = $this->createForm(UserType::class, $user);
 
         $form->submit($request->request->all());
-
+        //dump($request);
+        //dump($form->isValid());
+        //exit;
         if ($form->isValid()) {
             $encoder = $this->get('security.password_encoder');
             // le mot de passe en claire est encodé avant la sauvegarde
@@ -34,14 +51,35 @@ class ApiUserController extends Controller
             $em = $this->get('doctrine.orm.entity_manager');
             $em->persist($user);
             $em->flush();
+            //dump($user); exit;
             return $user;
         } else {
             return $form;
         }
     }
 
-     /**
-     * @Rest\View(serializerGroups={"user"})
+    /**
+     * @SWG\Parameter(
+     *     name="form",
+     *     in="body",
+     *     description="User creation parameters",
+     *     @Model(type=UserType::class)
+     * )
+     * @SWG\Response(
+     *     response=200,
+     *     description="Success",
+     *     @Model(type=User::class)
+     * )
+     * @SWG\Response(
+     *     response=400,
+     *     description="Form invalid"
+     * )
+     * @SWG\Response(
+     *     response=404,
+     *     description="User Not Found"
+     * )
+     * @SWG\Tag(name="Users")
+     * @Rest\View(serializerGroups={"preference"})
      * @Rest\Put("/users/{id}")
      */
     public function updateUserAction(Request $request)
@@ -50,7 +88,27 @@ class ApiUserController extends Controller
     }
 
     /**
-     * @Rest\View(serializerGroups={"user"})
+     * @SWG\Parameter(
+     *     name="form",
+     *     in="body",
+     *     description="User creation parameters",
+     *     @Model(type=UserType::class)
+     * )
+     * @SWG\Response(
+     *     response=200,
+     *     description="Success",
+     *     @Model(type=User::class)
+     * )
+     * @SWG\Response(
+     *     response=400,
+     *     description="Form invalid"
+     * )
+     * @SWG\Response(
+     *     response=404,
+     *     description="User Not Found"
+     * )
+     * @SWG\Tag(name="Users")
+     * @Rest\View(serializerGroups={"preference"})
      * @Rest\Patch("/users/{id}")
      */
     public function patchUserAction(Request $request)

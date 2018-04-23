@@ -1,7 +1,7 @@
 # This file is auto-generated during the composer install
 parameters:
     database_host: 192.168.51.123
-    database_port: null
+    database_port: 3307
     database_name: api-mini-site
     database_user: root
     database_password: root

@@ -68,20 +68,37 @@ swiftmailer:
     spool:     { type: memory }
 
 nelmio_api_doc: 
-    swagger:
-        api_base_path:        /
-        swagger_version:      '1.2'
-        api_version:          '1.0'
+    #swagger:
+    #    api_base_path:        /
+    #    swagger_version:      '1.2'
+    #    api_version:          '1.0'
+    #    info:
+    #       title:                Rest API
+    #        description:          'Proposition de sortie aux utilisateurs'
+
+
+    documentation:
+        host: 192.168.51.123
+        schemes: [http, https]
         info:
-            title:                Rest API
-            description:          'Proposition de sortie aux utilisateurs'
+            title: Documentation
+            description: This is an awesome app!
+            version: 2.0.0
+        #securityDefinitions:
+        #    Bearer:
+        #        type: apiKey
+        #        description: 'Value: Bearer {jwt}'
+        #        name: Authorization
+        #        in: header
+        #security:
+        #    - Bearer: []
+    areas:
+        path_patterns: # an array of regexps
+            - ^/api(?!/doc$)
+        #host_patterns:
+        #    - ^api\.
 
 
-    #areas:
-    #    path_patterns: # an array of regexps
-    #        - ^/api(?!/doc$)
-    #    host_patterns:
-    #        - ^api\.
 
 fos_rest:
     routing_loader:
@@ -106,7 +123,7 @@ fos_rest:
     exception:
         enabled: true
         messages: ## Conserver les messages en prod
-            'Symfony\Component\HttpKernel\Exception\HttpException' : true
+            'Symfony\Component\HttpKernel\Exception\HttpException': true
             'Symfony\Component\Security\Core\Exception\BadCredentialsException': true
         codes:
             'Symfony\Component\Security\Core\Exception\BadCredentialsException': 401

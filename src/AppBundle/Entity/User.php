@@ -7,6 +7,8 @@ use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Nelmio\ApiDocBundle\Annotation\Model;
+use Swagger\Annotations as SWG;
 
 /**
 * @ORM\Entity()
@@ -23,6 +25,7 @@ class User implements UserInterface
      * @ORM\GeneratedValue(strategy="AUTO")
      *
      * @Serializer\Groups({"user", "preference", "auth-token"})
+     * @SWG\Property(type="integer")
      */
     private $id;
 
@@ -33,6 +36,7 @@ class User implements UserInterface
      *
      * @Assert\NotBlank(message="FirstName Required!")
      * @Serializer\Groups({"user", "preference", "auth-token"})
+     * @SWG\Property(type="string")
      */
     private $firstname;
     
@@ -43,6 +47,7 @@ class User implements UserInterface
      *
      * @Assert\NotBlank(message="LastName Required!")
      * @Serializer\Groups({"user", "preference", "auth-token"})
+     * @SWG\Property(type="string")
      */
     private $lastname;
 
@@ -54,6 +59,7 @@ class User implements UserInterface
      * @Assert\NotBlank(message="Email Required!")
      * @Assert\Email(message="The email '{{ value }}' is not a valid email.")
      * @Serializer\Groups({"user", "preference", "auth-token"})
+     * @SWG\Property(type="string")
      */
     private $email;
     
@@ -63,6 +69,7 @@ class User implements UserInterface
      * @ORM\Column(name="password", type="string", length=255)
      *
      * @Serializer\Groups({"user"})
+     * @SWG\Property(type="string")
      */
     private $password;
     
@@ -80,6 +87,7 @@ class User implements UserInterface
      * )
      *
      * @Serializer\Groups({"New", "FullUpdate"})
+     * @SWG\Property(type="string")
      */
     private $plainPassword;
 

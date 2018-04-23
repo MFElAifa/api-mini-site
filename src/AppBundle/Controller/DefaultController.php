@@ -12,7 +12,7 @@ class DefaultController extends Controller
      */
     public function indexAction()
     {
-    	return $this->redirectToRoute('nelmio_api_doc_index');
-        //return $this->redirectToRoute('app.swagger_ui');
+    	//return $this->redirectToRoute('nelmio_api_doc_index');
+        return $this->redirectToRoute('app.swagger_ui');
     }
 }

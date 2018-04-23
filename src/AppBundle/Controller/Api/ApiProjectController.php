@@ -7,17 +7,19 @@ use AppBundle\Entity\Product;
 use AppBundle\Form\CategoryType;
 use AppBundle\Form\ProductType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Nelmio\ApiDocBundle\Annotation\ApiDoc;
-use FOS\RestBundle\Controller\Annotations as REST;
+#use Nelmio\ApiDocBundle\Annotation\ApiDoc;
+#use FOS\RestBundle\Controller\Annotations as REST;
+use FOS\RestBundle\Controller\Annotations\View;
+use FOS\RestBundle\Controller\Annotations\Post;
+use FOS\RestBundle\Controller\Annotations\Get;
+use FOS\RestBundle\Controller\Annotations\Delete;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class ApiProjectController extends Controller
 {
-    /**
-     * Createa new Category
-     *
+    /*
      * @ApiDoc(
      *    description="Add Category",
      *    section="Categories",
@@ -31,9 +33,13 @@ class ApiProjectController extends Controller
      *         400 = { "class"=CategoryType::class, "form_errors"=true, "name" = ""}
      *    }
      * )
-     * 
-     * @REST\View(statusCode=Response::HTTP_CREATED, serializerGroups={"list"})
-     * @REST\Post("/category")
+    */
+    /**
+     * Createa new Category
+     *
+     *
+     * @View(statusCode=Response::HTTP_CREATED, serializerGroups={"list"})
+     * @Post("/category")
      */
     public function postCategoryAction(Request $request)
     {
@@ -53,8 +59,8 @@ class ApiProjectController extends Controller
         }
     }
 
-    /**
-     * Get All Categories
+    /*
+     *
      * @ApiDoc(
      *  resource="/api/categories",
      *  description="Get Categories",
@@ -65,9 +71,13 @@ class ApiProjectController extends Controller
      *        500 = "Erreur Server"
      *  }
      * )
-     * 
-     * @REST\View()
-     * @REST\Get("/categories")
+     */
+
+    /**
+     * Get All Categories
+     *
+     * @View()
+     * @Get("/categories")
      */
     public function getCategoriesAction(Request $request)
     {
@@ -76,9 +86,7 @@ class ApiProjectController extends Controller
         return $productService->getAllCategories();
     }
 
-
-    /**
-     * Remove a Category
+    /*
      * @ApiDoc(
      *  resource="/api/categories",
      *  description="Delete Category",
@@ -91,8 +99,11 @@ class ApiProjectController extends Controller
      *        404 = "Category not found"
      *  }
      * )
-     * @REST\View(statusCode=Response::HTTP_NO_CONTENT)
-     * @REST\Delete("/categories")
+     */
+    /**
+     * Remove a Category
+     * @View(statusCode=Response::HTTP_NO_CONTENT)
+     * @Delete("/categories")
      */
     public function deleteCategoriesAction(Request $request)
     {
@@ -105,8 +116,7 @@ class ApiProjectController extends Controller
         }
     }
 
-    /**
-     * Create a new Product
+    /*
      * @ApiDoc(
      *    resource="/api/product",
      *    description="Add Product",
@@ -121,9 +131,12 @@ class ApiProjectController extends Controller
      *         400 = { "class"=ProductType::class, "form_errors"=true, "name" = ""}
      *    }
      * )
-     * 
-     * @REST\View(statusCode=Response::HTTP_CREATED, serializerGroups={"list"})
-     * @REST\Post("/product")
+     */
+    /**
+     * Create a new Product
+     *
+     * @View(statusCode=Response::HTTP_CREATED, serializerGroups={"list"})
+     * @Post("/product")
      */
     public function postProductAction(Request $request)
     {
@@ -152,9 +165,7 @@ class ApiProjectController extends Controller
         }
     }
 
-
-    /**
-     * Get All Products By category
+    /*
      * @ApiDoc(
      *  resource="/api/categories/{idCategory}/products/{page}",
      *  description="Get All Products By category",
@@ -179,9 +190,12 @@ class ApiProjectController extends Controller
      *        500 = "Erreur Server"
      *  }
      * )
-     * 
-     * @REST\View(serializerGroups={"list"})
-     * @REST\Get("/categories/{idCategory}/products/{page}", defaults={"page":1})
+     */
+    /**
+     * Get All Products By category
+     *
+     * @View(serializerGroups={"list"})
+     * @Get("/categories/{idCategory}/products/{page}", defaults={"page":1})
      */
     public function getProductsByCategoryAction(Request $request, $idCategory, $page)
     {
@@ -193,8 +207,7 @@ class ApiProjectController extends Controller
         return $productService->getAllProductsByCategory($category, $page);
     }
 
-    /**
-     * Remove a product
+    /*
      * @ApiDoc(
      *  resource="/api/products",
      *  description="Delete Category",
@@ -207,8 +220,11 @@ class ApiProjectController extends Controller
      *        404 = "Product not found"
      *  }
      * )
-     * @REST\View(statusCode=Response::HTTP_NO_CONTENT)
-     * @REST\Delete("/products")
+     */
+    /**
+     * Remove a product
+     * @View(statusCode=Response::HTTP_NO_CONTENT)
+     * @Delete("/products")
      */
     public function deleteProductsAction(Request $request)
     {
