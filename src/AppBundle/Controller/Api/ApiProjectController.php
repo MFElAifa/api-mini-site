@@ -7,7 +7,6 @@ use AppBundle\Entity\Product;
 use AppBundle\Form\CategoryType;
 use AppBundle\Form\ProductType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 use FOS\RestBundle\Controller\Annotations as REST;
 use Symfony\Component\HttpFoundation\Request;
@@ -17,7 +16,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 class ApiProjectController extends Controller
 {
     /**
-     * Creat a new Category
+     * Createa new Category
      *
      * @ApiDoc(
      *    description="Add Category",
