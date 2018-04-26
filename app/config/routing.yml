@@ -1,11 +1,16 @@
-app:
-    resource: "@AppBundle/Controller/DefaultController.php"
-    type:     annotation
-
 project:
     resource: "@AppBundle/Controller/Api/"
     type:     rest
     prefix:   /api
+
+app:
+    resource: "@AppBundle/Controller/DefaultController.php"
+    type:     annotation
+
+security:
+    resource: "@AppBundle/Controller/SecurityController.php"
+    type:     annotation
+
 
 
 #NelmioApiDocBundle:

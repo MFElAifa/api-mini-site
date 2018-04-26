@@ -33,3 +33,34 @@ services:
         class:     AppBundle\Security\AuthTokenAuthenticator
         arguments: ["@security.http_utils"]
         public:    false
+
+    #app.category_listener:
+    #        class: AppBundle\Listener\CategoryListener
+    #        arguments: ["2018-04-25"]
+    #        tags:
+    #           - { name: kernel.event_listener, event: kernel.response, method: processCatg }
+
+    #app.category_subscriber:
+    #        class:     AppBundle\Subscriber\CategorySubscriber
+    #        tags:
+    #            - { name: kernel.event_subscriber }
+
+    #app.censorship_processor:
+    #    class:     AppBundle\Bigbrother\CensorshipProcessor
+    #    arguments: ["@mailer"]
+
+    #app.censorship_listener:
+    #    class:     AppBundle\Bigbrother\CensorshipListener
+    #    arguments: ["@app.censorship_processor", [1, 2, 3]]
+    #    tags:
+    #        - { name: kernel.event_listener, event: app.bigbrother.post_message, method: processMessage }
+
+    app.security.login_form_authenticator:
+            class: AppBundle\Security\LoginFormAuthenticator
+            autowire: true
+
+    app.doctrine.hash_password_listener:
+            class: AppBundle\Doctrine\HashPasswordListener
+            autowire: true
+            tags:
+                - { name: doctrine.event_subscriber }

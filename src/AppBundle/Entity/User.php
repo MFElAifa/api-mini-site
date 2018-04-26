@@ -225,7 +225,7 @@ class User implements UserInterface
 
     public function getRoles()
     {
-        return [];
+        return ['ROLE_USER', 'ROLE_API'];
     }
 
 

@@ -1,0 +1,13 @@
+{% extends "AppBundle:_layout:layout.html.twig" %}
+
+{% block title %}Catégories{% endblock %}
+
+{% block content %}
+        <h1>Catégories</h1>
+
+        <ul>
+            {% for category in categories %}
+                <li>{{ category.id }} => {{ category.name }}</li>
+            {% endfor %}
+        </ul>
+{% endblock %}
