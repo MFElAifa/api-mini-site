@@ -10,7 +10,7 @@ parameters:
 
 framework:
     #esi:             ~
-    #translator:      { fallbacks: ["%locale%"] }
+    translator:      { fallbacks: ["en"] }
     secret:          "%secret%"
     router:
         resource: "%kernel.root_dir%/config/routing.yml"
@@ -128,4 +128,33 @@ fos_rest:
         codes:
             'Symfony\Component\Security\Core\Exception\BadCredentialsException': 401
 
+easy_admin:
+    edit:
+        title: '%%entity_label%%_edit'
+    new:
+        title: 'New %%entity_label%%'
+    #list:
+    #    actions:
+    #        - { name: 'new',  label: 'Add'}
+    #        - { name: 'search', label: 'Search'}
+    #        - { name: 'edit', label: 'Edit'}
+    #        - { name: 'delete', label: 'Delete'}
+    #search:
+    #    no_results: 'No Results'
 
+    entities:
+        Category:
+            class: AppBundle\Entity\Category
+            label: 'Category'
+            list:
+                title: '%%entity_label%% listing'
+        Product:
+            class: AppBundle\Entity\Product
+            label: 'Product'
+            list:
+                title: '%%entity_label%% listing'
+        Article:
+            class: AppBundle\Entity\Article
+            label: 'Article'
+            list:
+                title: '%%entity_label%%s'

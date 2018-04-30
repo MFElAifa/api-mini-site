@@ -7,6 +7,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\Response;
 use AppBundle\Bigbrother\MessagePostEvent;
 use AppBundle\Bigbrother\BigbrotherEvents;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 class DefaultController extends Controller
 {
@@ -17,6 +18,14 @@ class DefaultController extends Controller
     {
     	//return $this->redirectToRoute('nelmio_api_doc_index');
         //return $this->redirectToRoute('app.swagger_ui');
+        //$user = $this->getUser();
+        //dump($user->getRoles());
+        //exit;
+
+        if (!$this->get('security.authorization_checker')->isGranted('ROLE_USER')) {
+            // Sinon on déclenche une exception « Accès interdit »
+            throw new AccessDeniedException('Accès limité aux auteurs.');
+        }
         return $this->render('default\index.html.twig', [
             'base_dir' => 'XXXX'
         ]);

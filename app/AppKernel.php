@@ -20,7 +20,7 @@ class AppKernel extends Kernel
             new JMS\SerializerBundle\JMSSerializerBundle(),
             new Nelmio\ApiDocBundle\NelmioApiDocBundle(),
             new Doctrine\Bundle\MigrationsBundle\DoctrineMigrationsBundle(),
-           // new Braincrafted\Bundle\BootstrapBundle\BraincraftedBootstrapBundle(),
+            new EasyCorp\Bundle\EasyAdminBundle\EasyAdminBundle(),
         ];
 
         if (in_array($this->getEnvironment(), ['dev', 'test'], true)) {
